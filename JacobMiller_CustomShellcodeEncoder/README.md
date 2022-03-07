@@ -1,0 +1,11 @@
+# Custom Shellcode Encoder
+
+The goal for this project was to create a custom encoding/decoding method that allows for malicious shellcode scripts to go undetected by antivirus. There are many popular methods for obfuscating shellcode in order to trick antivirus into thinking it's harmless, such as XOR encoding. However, using such a well-known method for encoding shellcode is inviting a more in-depth analysis to unveil the truth. Thus, the appeal of making a custom encoding and decoding routine is that you can avoid having your "evasive" shellcode get detected simply because someone else has used the same encoding method before.
+
+### My idea: Add-Key-After (AKA) Encoding
+
+The encoding and decoding routines for this project were written in NASM Assembly, and I based the overall structure of both programs off of a template for a XOR encoding/decoding method. My original idea was to use multiplication and division as a means of transforming each byte of shellcode, but I ran into problems with causing some bytes to be transformed into a size too large to be held into a single byte. Once I realized the shortcomings of this idea, I considered employing the remainder/modulus of each shellcode byte as a method of altering each byte. This proved much easier to handle in terms of overflowing a byte, and while it is still technically possible it is very unlikely. However, I was faced with another problem, that being how I was going to know the values I needed to use for decoding with only being able to reference my encoded shellcode bytes.
+
+My solution was to hide each byte's "key" in plain sight, appending each key value immediately after its corresponding byte it is used to encode/decode. This results in the encoded shellcode being double the length of the original/decoded shellcode, but I considered it a worthwhile sacrifice for consistent and effective evasion. The title, add-key-after encoding, comes from the idea that I add each key value after the value it decodes.
+
+I included both my encoding and decoding routines as NASM programs, as well as a python script that runs my decoding routine as shellcode. The initial shellcode in the encoding program is shellcode that opens a shell, and the shellcode present in the decoding program is the encoded version of that original shellcode.
